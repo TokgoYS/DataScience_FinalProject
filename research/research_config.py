@@ -24,6 +24,10 @@ class ResearchConfig(Config):
             - annotations_per_batch: int, number of desired annotations
                 per batch on average, in terms of relations or objects
             - augment_annotations: bool, distort boxes to augment
+            - use_negative_samples: bool, use extra mined negatives
+            - negative_loss: str, use _negatives_loss()
+            - neg_classes: [int], on which classes _negatives_loss() is applied
+                                  eg. [1, 4, ...], if not set it applies to all
         Evaluation params:
             - compute_accuracy: bool, measure accuracy, not recall
             - use_merged: bool, use merged annotations in evaluation
@@ -55,7 +59,10 @@ class ResearchConfig(Config):
                  use_multi_tasking=True,
                  use_weighted_ce=False, batch_size=None, epochs=None,
                  learning_rate=0.002, weight_decay=None,
-                 apply_dynamic_lr=False, use_early_stopping=True,
+                 apply_dynamic_lr=False, use_early_stopping=True, 
+                 use_negative_samples=False,
+                 negative_loss=None,
+                 neg_classes=None,
                  restore_on_plateau=True, patience=1, commit='', num_workers=2,
                  use_consistency_loss=False, use_graphl_loss=False,
                  misc_params=None, **kwargs):
@@ -81,6 +88,7 @@ class ResearchConfig(Config):
         self.use_weighted_ce = use_weighted_ce
         self.use_consistency_loss = use_consistency_loss
         self.use_graphl_loss = use_graphl_loss
+        self.misc_params = misc_params
         self.compute_accuracy = compute_accuracy and self.task == 'preddet'
         self.use_merged = use_merged
         self._batch_size = batch_size
@@ -98,6 +106,9 @@ class ResearchConfig(Config):
         self.num_workers = num_workers
         self._set_dataset_task_annos_per_img()
         self._set_logger()
+        self.use_negative_samples = use_negative_samples
+        self.negative_loss = negative_loss
+        self.neg_classes = neg_classes
 
     def reset(self, custom_dataset=None):
         """Reset instance to handle another dataset."""
@@ -268,7 +279,7 @@ class ResearchConfig(Config):
         }
         for path in paths.values():
             if not osp.exists(path):
-                os.mkdir(path)
+                os.makedirs(path)
         return paths
 
     @property

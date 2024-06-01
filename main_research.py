@@ -22,6 +22,19 @@ MODELS = {
     'parsing_net': grounder.parsing_net
 }
 
+class ParseKwargs(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, dict())
+        for value in values:
+            key, value = value.split('=')
+            if value in ['True', 'False']:
+                value = value == 'True'
+            else:
+                try:
+                    value = float(value)
+                except ValueError:
+                    pass
+            getattr(namespace, self.dest)[key] = value
 
 def parse_args():
     """Parse input arguments."""
@@ -30,6 +43,9 @@ def parse_args():
     parser.add_argument(
         '--model', dest='model', help='Model to train (see main.py)',
         type=str, default='lang_spat_net'
+    )
+    parser.add_argument(
+        '--misc_params', nargs='*', action=ParseKwargs, default=None
     )
     parser.add_argument(
         '--object_classifier', dest='object_classifier',
@@ -111,10 +127,20 @@ def parse_args():
         help='Keep such many classes with the fewest training samples',
         type=int, default=None
     )
+    parser.add_argument(
+        '--use_negative_samples', dest='use_negative_samples',
+        help='Whether to use extra annotations from negative samples',
+        action='store_true'
+    )
     # Evaluation parameters
     parser.add_argument(
         '--compute_accuracy', dest='compute_accuracy',
         help='For preddet only, measure accuracy instead of recall',
+        action='store_true'
+    )
+    parser.add_argument(
+        '--use_merged', dest='use_merged',
+        help='Evaluate with merged predicate annotations',
         action='store_true'
     )
     # General model parameters
@@ -197,6 +223,16 @@ def parse_args():
         type=int, default=128
     )
     parser.add_argument(
+        '--negative_loss', dest='negative_loss',
+        help='Type of negative loss to use, see _negatives_loss()',
+        type=str, default=None
+    )
+    parser.add_argument(
+        '--neg_classes', dest='neg_classes', nargs='+',
+        help='Classes to implement negative loss, all if not set',
+        type=int, default=None
+    )
+    parser.add_argument(
         '--use_graphl_loss', dest='use_graphl_loss',
         help='Whether to use graphical contrastive losses (Zhang 19)',
         action='store_true'
@@ -212,7 +248,7 @@ def parse_args():
 def main():
     """Train and test a network pipeline."""
     args = parse_args()
-    model = MODELS[args.model]
+    model = MODELS['parsing_net'] #MODELS[args.model]
     _path = 'prerequisites/'
     cfg = ResearchConfig(
         net_name=args.net_name if args.net_name else args.model,
@@ -234,8 +270,11 @@ def main():
         filter_duplicate_rels=args.filter_duplicate_rels,
         filter_multiple_preds=args.filter_multiple_preds,
         max_train_samples=args.max_train_samples,
-        num_tail_classes=args.num_tail_classes,
+        num_tail_classes=args.num_tail_classes, 
+        use_negative_samples=args.use_negative_samples,
         rel_batch_size=args.rel_batch_size,
+        neg_classes=args.neg_classes,
+        negative_loss=args.negative_loss,
         prerequisites_path=_path, test_on_negatives=args.test_on_negatives)
     obj_classifier = None
     teacher = None

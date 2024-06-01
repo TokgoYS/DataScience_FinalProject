@@ -18,7 +18,7 @@ TRANSFORMERS = {
 def main(datasets):
     """Run the data preprocessing and creation pipeline."""
     _path = 'prerequisites/'
-    download_images(_path)
+    #download_images(_path)
     for dataset in datasets:
         print('Creating annotations for ' + dataset)
         TRANSFORMERS[dataset](DataConfig(_path, dataset)).transform()

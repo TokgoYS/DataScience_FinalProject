@@ -10,7 +10,7 @@ from scipy.io import loadmat
 
 from .dataset_transformer_class import DatasetTransformer
 
-VRD = 'http://cs.stanford.edu/people/ranjaykrishna/vrd/dataset.zip'
+VRD = 'https://cs.stanford.edu/people/ranjaykrishna/vrd/dataset.zip'
 
 
 class VRDTransformer(DatasetTransformer):
