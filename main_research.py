@@ -3,6 +3,7 @@
 
 import argparse
 import json
+import torch
 import os
 
 import yaml
@@ -247,8 +248,14 @@ def parse_args():
 
 def main():
     """Train and test a network pipeline."""
+    print("PyTorch version:", torch.__version__)
+    print("CUDA version:", torch.version.cuda)
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print("Using device:", device)
+
     args = parse_args()
-    model = MODELS['parsing_net'] #MODELS[args.model]
+    model = MODELS['parsing_net'] # MODELS[args.model]
     _path = 'prerequisites/'
     cfg = ResearchConfig(
         net_name=args.net_name if args.net_name else args.model,

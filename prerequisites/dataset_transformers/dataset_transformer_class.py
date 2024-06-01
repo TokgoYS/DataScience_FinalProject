@@ -453,7 +453,9 @@ class DatasetTransformer:
         data_folder = '/'.join(self._glove_txt.split('/')[:-1]) + '/'
         os.system(
             "wget https://huggingface.co/stanfordnlp/glove/resolve/main/glove.42B.300d.zip"
-        )
+        ) 
+        # https://huggingface.co/stanfordnlp/glove/resolve/main/glove.42B.300d.zip
+        # http://nlp.stanford.edu/data/wordvecs/glove.42B.300d.zip
         shutil.move('glove.42B.300d.zip', data_folder + 'glove.42B.300d.zip')
         with ZipFile(data_folder + 'glove.42B.300d.zip') as fid:
             fid.extractall(data_folder)

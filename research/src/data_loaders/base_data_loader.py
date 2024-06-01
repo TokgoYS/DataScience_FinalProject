@@ -355,7 +355,7 @@ class SGGDataLoader(torch.utils.data.DataLoader):
         super().__init__(
             dataset, batch_size=batch_size, shuffle=shuffle,
             num_workers=num_workers, drop_last=drop_last,
-            collate_fn=lambda data: sgg_collate_fn(data))
+            collate_fn=sgg_collate_fn)
         self._device = device
 
     def get(self, feature, batch, step):
