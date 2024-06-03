@@ -196,7 +196,7 @@ class BaseDataset(Dataset):
     def get_negative_ids(anno):
         """Return negative predicate ids for given image."""
         return np.array([
-            -1 if not neg_ids else neg_ids[0]
+            -1 if len(neg_ids) == 0 else neg_ids[0]
             for neg_ids in anno['relations']['neg_ids']
         ])
 
@@ -280,20 +280,28 @@ class BaseDataset(Dataset):
     def _add_background(self, anno):
         """Add some background annotations."""
         anno = deepcopy(anno)
+        
+        # 確保 anno['relations']['neg_ids'] 是一個 NumPy 陣列
+        if not isinstance(anno['relations']['neg_ids'], np.ndarray):
+            anno['relations']['neg_ids'] = np.array(anno['relations']['neg_ids'], dtype=object)
+        
         inds = np.array([
             n for n, name in enumerate(anno['relations']['names'])
             if name != '__background__'
-            or anno['relations']['neg_ids'][n]
+            or np.any(anno['relations']['neg_ids'][n])
             or (anno['split_id'] == 0 and random.random() < self._bg_perc)
             or (anno['split_id'] != 0 and self._task != 'preddet')
         ])
+        
         if not inds.tolist():
             inds = np.array([0])
+        
         anno['relations']['names'] = anno['relations']['names'][inds]
         anno['relations']['ids'] = anno['relations']['ids'][inds]
         anno['relations']['subj_ids'] = anno['relations']['subj_ids'][inds]
         anno['relations']['obj_ids'] = anno['relations']['obj_ids'][inds]
         anno['relations']['neg_ids'] = anno['relations']['neg_ids'][inds]
+        
         return anno
 
     @staticmethod

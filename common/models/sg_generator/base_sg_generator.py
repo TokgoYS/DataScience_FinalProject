@@ -36,7 +36,7 @@ class BaseSGGenerator(nn.Module):
         self._mask_size = kwargs.get('mask_size', 32)
 
         # Visual backbone
-        _backbone = fasterrcnn_resnet50_fpn(weights=True)
+        _backbone = fasterrcnn_resnet50_fpn(pretrained=True)
         for name, param in _backbone.named_parameters():
             if name.startswith('backbone'):
                 param.requires_grad = False

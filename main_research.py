@@ -255,7 +255,7 @@ def main():
     print("Using device:", device)
 
     args = parse_args()
-    model = MODELS['parsing_net'] # MODELS[args.model]
+    model = MODELS[args.model] # MODELS[args.model]
     _path = 'prerequisites/'
     cfg = ResearchConfig(
         net_name=args.net_name if args.net_name else args.model,

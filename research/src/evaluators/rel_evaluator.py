@@ -258,7 +258,7 @@ def relationship_recall(chkpnts, det_labels, det_bboxes, gt_labels,
     if phrase_recall:
         det_bboxes = create_phrase_boxes(det_bboxes)
         gt_bboxes = create_phrase_boxes(gt_bboxes)
-    relationships_found = np.zeros(chkpnts.shape).astype(np.float)
+    relationships_found = np.zeros(chkpnts.shape).astype(float)
 
     # Check only detections that match any of the ground-truth
     possible_matches = (det_labels[..., None] == gt_labels.T[None, ...]).all(1)

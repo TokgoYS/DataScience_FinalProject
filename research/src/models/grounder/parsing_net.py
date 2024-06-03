@@ -78,14 +78,14 @@ class TrainTester(GRNDTrainTester):
 
     def get_gauss_kernels(self, norm_boxes):
         """get gaussian kernels for gt box centers"""
-        norm_boxes = norm_boxes.clone()
+        norm_boxes = norm_boxes.clone().cpu().numpy()
         norm_boxes *= self.net._mask_size
         x, y = np.mgrid[0:self.net._mask_size:1, 0:self.net._mask_size:1]
         pos = np.dstack((x, y))
         rv = [multivariate_normal([norm_boxes[i, 1], norm_boxes[i, 0]],
-                                  [[0.5 * norm_boxes[i, 3], 0],
-                                   [0, 0.5 * norm_boxes[i, 2]]]).pdf(pos)
-              for i in range(len(norm_boxes))]
+                                [[0.5 * norm_boxes[i, 3], 0],
+                                [0, 0.5 * norm_boxes[i, 2]]]).pdf(pos)
+            for i in range(len(norm_boxes))]
         # Normalize for bce loss
         gauss_masks = torch.stack(
             [torch.tensor(d/d.max()) for d in rv], dim=0

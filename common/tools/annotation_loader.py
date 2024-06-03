@@ -128,16 +128,21 @@ class AnnotationLoader:
     @staticmethod
     def _filter_bg(anno):
         """Filter background annotations."""
+        # Ensure anno['relations']['neg_ids'] is a NumPy array
+        if not isinstance(anno['relations']['neg_ids'], np.ndarray):
+            anno['relations']['neg_ids'] = np.array(anno['relations']['neg_ids'], dtype=object)
+
         inds = np.array([
             n for n, name in enumerate(anno['relations']['names'])
-            if name != '__background__' or anno['relations']['neg_ids'][n]
+            if name != '__background__' or any(anno['relations']['neg_ids'][n])
         ])
-        anno['relations']['names'] = anno['relations']['names'][inds]
-        anno['relations']['ids'] = anno['relations']['ids'][inds]
-        anno['relations']['merged_ids'] = anno['relations']['merged_ids'][inds]
-        anno['relations']['subj_ids'] = anno['relations']['subj_ids'][inds]
-        anno['relations']['obj_ids'] = anno['relations']['obj_ids'][inds]
-        anno['relations']['neg_ids'] = anno['relations']['neg_ids'][inds]
+
+        anno['relations']['names'] = np.array(anno['relations']['names'])[inds]
+        anno['relations']['ids'] = np.array(anno['relations']['ids'])[inds]
+        anno['relations']['merged_ids'] = np.array(anno['relations']['merged_ids'])[inds]
+        anno['relations']['subj_ids'] = np.array(anno['relations']['subj_ids'])[inds]
+        anno['relations']['obj_ids'] = np.array(anno['relations']['obj_ids'])[inds]
+        anno['relations']['neg_ids'] = np.array(anno['relations']['neg_ids'], dtype=object)[inds]
         return anno
 
     @staticmethod
@@ -221,7 +226,16 @@ class AnnotationLoader:
             )
             if update_neg_ids:
                 neg_ids = negatives[anno['filename']]
-            anno['relations']['neg_ids'] = np.copy(neg_ids)
+
+            # 確保 neg_ids 是規則的巢狀列表
+            max_length = max(len(ids) for ids in neg_ids)
+            for i in range(len(neg_ids)):
+                if len(neg_ids[i]) < max_length:
+                    neg_ids[i].extend([0] * (max_length - len(neg_ids[i])))
+        
+            # 直接分配列表
+            anno['relations']['neg_ids'] = np.array(neg_ids, dtype=object)
+            #anno['relations']['neg_ids'] = np.copy(neg_ids)
         return annotations
 
     def _to_list_with_arrays(self, annotations):
