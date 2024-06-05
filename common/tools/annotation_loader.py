@@ -24,8 +24,8 @@ class AnnotationLoader:
         self._bg_perc = config.bg_perc
         self._dataset = config.dataset
         self._classes_to_keep = config.classes_to_keep
-        self._filter_duplicate_rels = config.filter_duplicate_rels
-        self._filter_multiple_preds = config.filter_multiple_preds
+        self._duplicate_rels = config.duplicate_rels
+        self._multiple_preds = config.multiple_preds
         self._json_path = config.paths['json_path']
         self._mode = config.task
         self._orig_images_path = config.orig_img_path
@@ -110,12 +110,12 @@ class AnnotationLoader:
             anno for anno in annotations if anno['relations']['names'].tolist()
         ]
         # Filter duplicate triplets per pair
-        if self._filter_duplicate_rels:
+        if self._duplicate_rels:
             for anno in annotations:
                 if anno['split_id'] == 0:
                     anno['relations'] = self._filter_dupls(anno['relations'])
         # Filter multiple triplets per pair
-        if self._filter_multiple_preds:
+        if self._multiple_preds:
             for anno in annotations:
                 if anno['split_id'] == 0:
                     anno['relations'] = self._filter_multi(anno['relations'])

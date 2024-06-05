@@ -25,9 +25,9 @@ class Config:
                 - 'objdet': Object Detection
         Data handling params:
             - bg_perc: float in [0, 1], perc. of background annotations
-            - filter_duplicate_rels: bool, filter relations
+            - duplicate_rels: bool, filter relations
                 annotated more than once (during training)
-            - filter_multiple_preds: bool, sample a single
+            - multiple_preds: bool, sample a single
                 predicate per object pair (during training)
             - max_train_samples: int or None, keep classes with samples
                 less than this number
@@ -42,7 +42,7 @@ class Config:
     """
 
     def __init__(self, dataset='VRD', task='preddet', bg_perc=None,
-                 filter_duplicate_rels=False, filter_multiple_preds=False,
+                 duplicate_rels=False, multiple_preds=False,
                  max_train_samples=None, num_tail_classes=None,
                  prerequisites_path='prerequisites/', rel_batch_size=64,
                  use_coco=False, device='cuda:0',
@@ -51,8 +51,8 @@ class Config:
         self.dataset = dataset
         self.task = task
         self._bg_perc = bg_perc
-        self.filter_duplicate_rels = filter_duplicate_rels
-        self.filter_multiple_preds = filter_multiple_preds
+        self.duplicate_rels = duplicate_rels
+        self.multiple_preds = multiple_preds
         self.max_train_samples = max_train_samples
         self.num_tail_classes = num_tail_classes
         self.prerequisites_path = prerequisites_path

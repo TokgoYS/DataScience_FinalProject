@@ -34,7 +34,8 @@ class DatasetTransformer:
         self._orig_images_path = config.orig_img_path
         assert os.path.exists(self._orig_images_path)
         base = config.paths['json_path'] + self._dataset
-        self._conceptnet_json = base + '_conceptnet.json'
+        # When training the baseline model, please comment out the line below; otherwise, keep it uncommented.
+        self._conceptnet_json = base + '_conceptnet.json' 
         self._merged_json = base + '_merged.pkl'
         self._negative_json = base + '_negatives.json'
         self._preddet_json = base + '_preddet.json'
@@ -49,7 +50,8 @@ class DatasetTransformer:
     def transform(self):
         """Run the transformation pipeline."""
         jsons = [
-            self._conceptnet_json,
+            # When training the baseline model, please comment out the line below; otherwise, keep it uncommented.
+            self._conceptnet_json, 
             self._preddet_json,
             self._predicate_json,
             self._object_json,
@@ -62,7 +64,9 @@ class DatasetTransformer:
             predicates, objects = self.save_predicates_objects(annos)
             if not os.path.exists(self._word2vec_json):
                 self.save_word2vec_vectors(predicates, objects)
+            # When training the baseline model, please comment out the line below; otherwise, keep it uncommented.
             if not os.path.exists(self._conceptnet_json):
+               # When training the baseline model, please comment out the line below; otherwise, keep it uncommented.
                self.save_conceptnet_vectors(predicates, objects)
             annos = self.update_labels(annos, predicates, objects)
             with open(self._preddet_json, 'w') as fid:
@@ -240,7 +244,9 @@ class DatasetTransformer:
         """Build conceptnet dictionary of dataset vocabulary."""
         if not os.path.exists(self._glove_txt):
             self._download_glove()
-        with open('numberbatch-en-19.08.txt', encoding='utf-8') as fid:
+        # Please replace the following line with your path.
+        conceptNet_numberbatch_file_path = 'C:\\Users\\user\\Desktop\\final_project_external_knowledge\\prerequisites\\numberbatch-en-19.08.txt' 
+        with open(conceptNet_numberbatch_file_path, encoding='utf-8') as fid:
             en_w2v = {
                 line.split()[0]: np.array(line.split()[1:]).astype(float)
                 for line in fid.readlines()

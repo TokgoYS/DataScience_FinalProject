@@ -221,9 +221,9 @@ class ResearchConfig(Config):
             annos_per_img = annos_per_img['pairs']
         elif self.task == 'objcls':
             annos_per_img = annos_per_img['objects']
-        elif self.task == 'preddet' and self.filter_multiple_preds:
+        elif self.task == 'preddet' and self.multiple_preds:
             annos_per_img = annos_per_img['predicates_filtered']
-        elif self.task == 'preddet' and self.filter_duplicate_rels:
+        elif self.task == 'preddet' and self.duplicate_rels:
             annos_per_img = annos_per_img['duplicates_filtered']
         elif self.task == 'preddet':
             annos_per_img = annos_per_img['relations']
@@ -241,9 +241,9 @@ class ResearchConfig(Config):
             annos_per_img = annos_per_img['pairs']
         elif self.task == 'objcls':
             annos_per_img = annos_per_img['objects']
-        elif self.task == 'preddet' and self.filter_multiple_preds:
+        elif self.task == 'preddet' and self.multiple_preds:
             annos_per_img = annos_per_img['predicates_filtered']
-        elif self.task == 'preddet' and self.filter_duplicate_rels:
+        elif self.task == 'preddet' and self.duplicate_rels:
             annos_per_img = annos_per_img['duplicates_filtered']
         elif self.task in {'preddet', 'sggen'}:
             annos_per_img = annos_per_img['relations']
