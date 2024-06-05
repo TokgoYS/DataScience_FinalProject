@@ -49,7 +49,7 @@ class DatasetTransformer:
     def transform(self):
         """Run the transformation pipeline."""
         jsons = [
-            # self._conceptnet_json,
+            self._conceptnet_json,
             self._preddet_json,
             self._predicate_json,
             self._object_json,
@@ -62,8 +62,8 @@ class DatasetTransformer:
             predicates, objects = self.save_predicates_objects(annos)
             if not os.path.exists(self._word2vec_json):
                 self.save_word2vec_vectors(predicates, objects)
-            # if not os.path.exists(self._conceptnet_json):
-            #    self.save_conceptnet_vectors(predicates, objects)
+            if not os.path.exists(self._conceptnet_json):
+               self.save_conceptnet_vectors(predicates, objects)
             annos = self.update_labels(annos, predicates, objects)
             with open(self._preddet_json, 'w') as fid:
                 json.dump(annos, fid)
